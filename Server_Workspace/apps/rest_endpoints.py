@@ -25,8 +25,8 @@ tasks = [
 
 @app.route('/config-prediction/api/v1.0/service-data/all-data', methods=['GET'])
 def get_all_data():
-    dataLoader.get_all_data("", "")
-    return jsonify({'tasks': tasks})
+    return dataLoader.get_all_data("", "")
+    #return jsonify({'tasks': tasks})
 
 
 @app.route('/config-prediction/api/v1.0/service/config-data', methods=['GET'])

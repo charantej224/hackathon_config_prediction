@@ -1,5 +1,7 @@
 import pandas as pd
 from datetime import datetime
+from apps.models.data_model import Data
+import json
 
 
 class DataLoader:
@@ -32,8 +34,12 @@ class DataLoader:
         result = pd.concat(frames)
         result['month'] = result['created_time'].apply(lambda x: x.month)
         result['day'] = result['created_time'].apply(lambda x: x.day)
-        grouped_values = result.groupby(['product_name', 'month', 'day'])
-        #grouped_values['count'] = result.groupby(['product_name', 'created_time']).count()
-        print(grouped_values.get_group('Product 3'))
+        grouped_values = result.groupby(['product_name', 'month', 'day']).count()
+        grouped_values1 = pd.DataFrame({'count': result.groupby(['product_name', 'month', 'day']).size()}).reset_index()
+        print(grouped_values1)
+        return_list = []
+        for index, row in grouped_values1.iterrows():
+            return_list.append(Data(row['product_name'], row['month'], row['day'], row['count']))
+            print(grouped_values1.index[index])
 
-        return result
+        return json.dumps(return_list)
