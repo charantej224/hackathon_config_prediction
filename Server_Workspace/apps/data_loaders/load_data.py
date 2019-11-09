@@ -26,20 +26,23 @@ class DataLoader:
         self.is_loaded = True
 
     def get_all_data(self, start_time, end_time):
+        start_dt_time = datetime.strptime(start_time, "%m/%d/%y %H:%M")
+        end_dt_time = datetime.strptime(end_time, "%m/%d/%y %H:%M")
+
         response_data_deployment = pd.DataFrame(self.deployment_data_frame, columns=['created_time', 'product_name'])
         response_expansion_data_frame = pd.DataFrame(self.expansion_data_frame,
                                                      columns=['created_time', 'product_name'])
         response_updated_data_frame = pd.DataFrame(self.updated_data_frame, columns=['created_time', 'product_name'])
         frames = [response_data_deployment, response_expansion_data_frame, response_updated_data_frame]
         result = pd.concat(frames)
+        result = result[(result["created_time"] > start_dt_time) & (result["created_time"] < end_dt_time)]
         result['month'] = result['created_time'].apply(lambda x: x.month)
         result['day'] = result['created_time'].apply(lambda x: x.day)
-        grouped_values = result.groupby(['product_name', 'month', 'day']).count()
         grouped_values1 = pd.DataFrame({'count': result.groupby(['product_name', 'month', 'day']).size()}).reset_index()
         print(grouped_values1)
         return_list = []
         for index, row in grouped_values1.iterrows():
-            return_list.append(Data(row['product_name'], row['month'], row['day'], row['count']))
+            return_list.append(Data(row['product_name'], row['month'], row['day'], row['count']).to_json())
             print(grouped_values1.index[index])
 
         return json.dumps(return_list)

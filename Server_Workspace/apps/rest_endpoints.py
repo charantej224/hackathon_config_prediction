@@ -3,6 +3,7 @@ from os import abort
 
 from flask import Flask, jsonify
 from apps.data_loaders.load_data import DataLoader
+from flask import request
 
 app = Flask(__name__)
 dataLoader = DataLoader()
@@ -25,8 +26,10 @@ tasks = [
 
 @app.route('/config-prediction/api/v1.0/service-data/all-data', methods=['GET'])
 def get_all_data():
-    return dataLoader.get_all_data("", "")
-    #return jsonify({'tasks': tasks})
+    start_time = request.args.get('start_time')
+    end_time = request.args.get('end_time')
+    # return dataLoader.get_all_data("9/9/19 18:57", "11/4/19 21:59")
+    return dataLoader.get_all_data(start_time, end_time)
 
 
 @app.route('/config-prediction/api/v1.0/service/config-data', methods=['GET'])
