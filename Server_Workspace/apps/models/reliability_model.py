@@ -1,12 +1,11 @@
 import json
 
 
-class Data(object):
-    def __init__(self, product_name, count):
+class Reliability(object):
+    def __init__(self, product_name, result, difference):
         self.product_name = product_name
-        #self.month = month
-        #self.day = day
-        self.count = count
+        self.result = result
+        self.difference = difference
 
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__,

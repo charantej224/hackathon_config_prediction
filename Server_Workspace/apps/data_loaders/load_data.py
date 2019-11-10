@@ -2,6 +2,8 @@ import pandas as pd
 from datetime import datetime
 from apps.models.data_model import Data
 from apps.models.config_model import ConfigData
+from apps.models.collective_reliability_model import Collective
+from apps.models.reliability_model import Reliability
 import json
 
 
@@ -38,13 +40,14 @@ class DataLoader:
         frames = [response_data_deployment, response_expansion_data_frame, response_updated_data_frame]
         result = pd.concat(frames)
         result = result[(result["created_time"] > start_dt_time) & (result["created_time"] < end_dt_time)]
-        result['month'] = result['created_time'].apply(lambda x: x.month)
-        result['day'] = result['created_time'].apply(lambda x: x.day)
-        grouped_values1 = pd.DataFrame({'count': result.groupby(['product_name', 'month', 'day']).size()}).reset_index()
+        #result['month'] = result['created_time'].apply(lambda x: x.month)
+        #result['day'] = result['created_time'].apply(lambda x: x.day)
+        #grouped_values1 = pd.DataFrame({'count': result.groupby(['product_name', 'month', 'day']).size()}).reset_index()
+        grouped_values1 = pd.DataFrame({'count': result.groupby(['product_name']).size()}).reset_index()
         print(grouped_values1)
         return_list = []
         for index, row in grouped_values1.iterrows():
-            return_list.append(Data(row['product_name'], row['month'], row['day'], row['count']).to_json())
+            return_list.append(Data(row['product_name'], row['count']).to_json())
             print(grouped_values1.index[index])
 
         return json.dumps(return_list)
@@ -70,3 +73,28 @@ class DataLoader:
             print(grouped_values1.index[index])
 
         return json.dumps(return_list)
+
+    def get_reliability_info(self, start_time, end_time):
+        start_dt_time = datetime.strptime(start_time, "%m/%d/%y %H:%M")
+        end_dt_time = datetime.strptime(end_time, "%m/%d/%y %H:%M")
+        response_data_deployment = pd.DataFrame(self.deployment_data_frame,
+                                                columns=['product_name', 'created_time', 'completed_time', 'result'])
+        response_expansion_data_frame = pd.DataFrame(self.expansion_data_frame,
+                                                     columns=['product_name', 'created_time', 'completed_time',
+                                                              'result'])
+        response_updated_data_frame = pd.DataFrame(self.updated_data_frame,
+                                                   columns=['product_name', 'created_time', 'completed_time', 'result'])
+
+        response_data_deployment = response_data_deployment[
+            (response_data_deployment["created_time"] > start_dt_time) & (
+                    response_data_deployment["created_time"] < end_dt_time)]
+        response_data_deployment['difference'] = response_data_deployment.apply(self.data_diff, axis=1)
+
+        print(response_data_deployment)
+        return_list = []
+        for index, row in response_data_deployment.iterrows():
+            return_list.append(Reliability(row['product_name'], row['result'], row['difference']).to_json())
+        return json.dumps(return_list)
+
+    def data_diff(self, x):
+        return (x['completed_time'] - x['created_time']).seconds

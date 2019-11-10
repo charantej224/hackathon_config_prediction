@@ -27,7 +27,6 @@ tasks = [
 
 
 @app.route('/config-prediction/api/v1.0/service/all-data', methods=['GET'])
-
 def get_all_data():
     start_time = request.args.get('start_time')
     end_time = request.args.get('end_time')
@@ -44,7 +43,9 @@ def get_config_data():
 
 @app.route('/config-prediction/api/v1.0/service/reliability-data', methods=['GET'])
 def get_reliability_data():
-    return jsonify({'tasks': tasks})
+    start_time = request.args.get('start_time')
+    end_time = request.args.get('end_time')
+    return dataLoader.get_reliability_info(start_time, end_time)
 
 
 @app.route('/config-prediction/api/v1.0/service/efficiency', methods=['GET'])
