@@ -1,10 +1,10 @@
 import json
 
 
-class ConfigData(object):
-    def __init__(self, product_name, count, configuration):
-        self.product_name = product_name
-        self.configuration = configuration
+class Retention(object):
+    def __init__(self, customer_id, result, count):
+        self.customer_id = customer_id
+        self.result = result
         self.count = count
 
     def to_json(self):

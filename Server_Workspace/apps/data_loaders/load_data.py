@@ -5,6 +5,7 @@ from apps.models.config_model import ConfigData
 from apps.models.collective_reliability_model import Collective
 from apps.models.reliability_model import Reliability
 from apps.models.efficiency_model import Efficiency
+from apps.models.retention_model import Retention
 
 import json
 
@@ -63,15 +64,12 @@ class DataLoader:
                                                      columns=['created_time', 'product_name', 'cores', 'storage'])
         result = pd.concat([response_data_deployment, response_expansion_data_frame])
         result = result[(result["created_time"] > start_dt_time) & (result["created_time"] < end_dt_time)]
-        result['month'] = result['created_time'].apply(lambda x: x.month)
-        result['day'] = result['created_time'].apply(lambda x: x.day)
         grouped_values1 = pd.DataFrame(
-            {'count': result.groupby(['product_name', 'month', 'day', 'cores', 'storage']).size()}).reset_index()
-        print(grouped_values1)
+            {'count': result.groupby(['product_name', 'cores', 'storage']).size()}).reset_index()
         return_list = []
         for index, row in grouped_values1.iterrows():
-            return_list.append(ConfigData(row['product_name'], row['month'], row['day'], row['count'], row['cores'],
-                                          row['storage']).to_json())
+            return_list.append(
+                ConfigData(row['product_name'], row['count'], str(row['cores']) + "," + str(row['storage'])).to_json())
             print(grouped_values1.index[index])
 
         return json.dumps(return_list)
@@ -135,4 +133,21 @@ class DataLoader:
         return_list = []
         for index, row in grouped_values1.iterrows():
             return_list.append(Efficiency(row['product_name'], row['result'], row['count']).to_json())
+        return json.dumps(return_list)
+
+    def get_retention_data(self, start_time, end_time):
+        print(start_time)
+        start_dt_time = datetime.strptime(start_time, "%m/%d/%y %H:%M")
+        end_dt_time = datetime.strptime(end_time, "%m/%d/%y %H:%M")
+        response_expansion_data_frame = pd.DataFrame(self.expansion_data_frame,
+                                                     columns=['created_time', 'result', 'customer_id'])
+        response_updated_data_frame = pd.DataFrame(self.updated_data_frame,
+                                                   columns=['created_time', 'result', 'customer_id'])
+        frames = [response_expansion_data_frame, response_updated_data_frame]
+        result = pd.concat(frames)
+        result = result[(result["created_time"] > start_dt_time) & (result["created_time"] < end_dt_time)]
+        grouped_values1 = pd.DataFrame({'count': result.groupby(['customer_id', 'result']).size()}).reset_index()
+        return_list = []
+        for index, row in grouped_values1.iterrows():
+            return_list.append(Retention(row['product_name'], row['result'], row['count']).to_json())
         return json.dumps(return_list)

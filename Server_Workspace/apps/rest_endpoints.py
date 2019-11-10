@@ -55,9 +55,11 @@ def get_efficiency_data():
     return dataLoader.get_efficiency_data(start_time, end_time)
 
 
-@app.route('/config-prediction/api/v1.0/service/retention-data', methods=['GET'])
+@app.route('/config-prediction/api/v1.0/service/retention', methods=['GET'])
 def get_retention_data():
-    return jsonify({'tasks': tasks})
+    start_time = request.args.get('start_time')
+    end_time = request.args.get('end_time')
+    return dataLoader.get_efficiency_data(start_time, end_time)
 
 
 if __name__ == '__main__':
