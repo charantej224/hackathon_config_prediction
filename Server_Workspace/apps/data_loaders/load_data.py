@@ -40,9 +40,9 @@ class DataLoader:
         frames = [response_data_deployment, response_expansion_data_frame, response_updated_data_frame]
         result = pd.concat(frames)
         result = result[(result["created_time"] > start_dt_time) & (result["created_time"] < end_dt_time)]
-        #result['month'] = result['created_time'].apply(lambda x: x.month)
-        #result['day'] = result['created_time'].apply(lambda x: x.day)
-        #grouped_values1 = pd.DataFrame({'count': result.groupby(['product_name', 'month', 'day']).size()}).reset_index()
+        # result['month'] = result['created_time'].apply(lambda x: x.month)
+        # result['day'] = result['created_time'].apply(lambda x: x.day)
+        # grouped_values1 = pd.DataFrame({'count': result.groupby(['product_name', 'month', 'day']).size()}).reset_index()
         grouped_values1 = pd.DataFrame({'count': result.groupby(['product_name']).size()}).reset_index()
         print(grouped_values1)
         return_list = []
@@ -90,11 +90,26 @@ class DataLoader:
                     response_data_deployment["created_time"] < end_dt_time)]
         response_data_deployment['difference'] = response_data_deployment.apply(self.data_diff, axis=1)
 
-        print(response_data_deployment)
-        return_list = []
+        response_expansion_data_frame = response_expansion_data_frame[
+            (response_expansion_data_frame["created_time"] > start_dt_time) & (
+                    response_expansion_data_frame["created_time"] < end_dt_time)]
+        response_expansion_data_frame['difference'] = response_expansion_data_frame.apply(self.data_diff, axis=1)
+
+        response_updated_data_frame = response_updated_data_frame[
+            (response_updated_data_frame["created_time"] > start_dt_time) & (
+                    response_updated_data_frame["created_time"] < end_dt_time)]
+        response_updated_data_frame['difference'] = response_updated_data_frame.apply(self.data_diff, axis=1)
+        print(response_expansion_data_frame)
+        deployment_response = []
+        expansion_response = []
+        update_response = []
         for index, row in response_data_deployment.iterrows():
-            return_list.append(Reliability(row['product_name'], row['result'], row['difference']).to_json())
-        return json.dumps(return_list)
+            deployment_response.append(Reliability(row['product_name'], row['result'], row['difference']).to_json())
+        for index, row in response_expansion_data_frame.iterrows():
+            expansion_response.append(Reliability(row['product_name'], row['result'], row['difference']).to_json())
+        for index, row in response_updated_data_frame.iterrows():
+            update_response.append(Reliability(row['product_name'], row['result'], row['difference']).to_json())
+        return json.dumps(Collective(deployment_response, expansion_response, update_response).to_json())
 
     def data_diff(self, x):
         return (x['completed_time'] - x['created_time']).seconds
