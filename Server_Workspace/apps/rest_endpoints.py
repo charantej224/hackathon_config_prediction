@@ -59,7 +59,7 @@ def get_efficiency_data():
 def get_retention_data():
     start_time = request.args.get('start_time')
     end_time = request.args.get('end_time')
-    return dataLoader.get_efficiency_data(start_time, end_time)
+    return dataLoader.get_retention_data(start_time, end_time)
 
 
 if __name__ == '__main__':
