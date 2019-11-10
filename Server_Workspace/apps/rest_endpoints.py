@@ -50,7 +50,9 @@ def get_reliability_data():
 
 @app.route('/config-prediction/api/v1.0/service/efficiency', methods=['GET'])
 def get_efficiency_data():
-    return jsonify({'tasks': tasks})
+    start_time = request.args.get('start_time')
+    end_time = request.args.get('end_time')
+    return dataLoader.get_efficiency_data(start_time, end_time)
 
 
 @app.route('/config-prediction/api/v1.0/service/retention-data', methods=['GET'])

@@ -4,6 +4,8 @@ from apps.models.data_model import Data
 from apps.models.config_model import ConfigData
 from apps.models.collective_reliability_model import Collective
 from apps.models.reliability_model import Reliability
+from apps.models.efficiency_model import Efficiency
+
 import json
 
 
@@ -113,3 +115,24 @@ class DataLoader:
 
     def data_diff(self, x):
         return (x['completed_time'] - x['created_time']).seconds
+
+    def get_efficiency_data(self, start_time, end_time):
+        print(start_time)
+        start_dt_time = datetime.strptime(start_time, "%m/%d/%y %H:%M")
+        end_dt_time = datetime.strptime(end_time, "%m/%d/%y %H:%M")
+
+        response_data_deployment = pd.DataFrame(self.deployment_data_frame,
+                                                columns=['created_time', 'result', 'product_name'])
+        response_expansion_data_frame = pd.DataFrame(self.expansion_data_frame,
+                                                     columns=['created_time', 'result', 'product_name'])
+        response_updated_data_frame = pd.DataFrame(self.updated_data_frame,
+                                                   columns=['created_time', 'result', 'product_name'])
+        frames = [response_data_deployment, response_expansion_data_frame, response_updated_data_frame]
+        result = pd.concat(frames)
+        result = result[(result["created_time"] > start_dt_time) & (result["created_time"] < end_dt_time)]
+        grouped_values1 = pd.DataFrame({'count': result.groupby(['result', 'product_name']).size()}).reset_index()
+        print(grouped_values1)
+        return_list = []
+        for index, row in grouped_values1.iterrows():
+            return_list.append(Efficiency(row['product_name'], row['result'], row['count']).to_json())
+        return json.dumps(return_list)
