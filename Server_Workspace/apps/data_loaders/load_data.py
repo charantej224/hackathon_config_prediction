@@ -27,6 +27,7 @@ class DataLoader:
         self.is_loaded = True
 
     def get_all_data(self, start_time, end_time):
+        print(start_time)
         start_dt_time = datetime.strptime(start_time, "%m/%d/%y %H:%M")
         end_dt_time = datetime.strptime(end_time, "%m/%d/%y %H:%M")
 

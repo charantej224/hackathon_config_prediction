@@ -4,8 +4,10 @@ from os import abort
 from flask import Flask, jsonify
 from apps.data_loaders.load_data import DataLoader
 from flask import request
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 dataLoader = DataLoader()
 
 tasks = [
@@ -25,6 +27,7 @@ tasks = [
 
 
 @app.route('/config-prediction/api/v1.0/service/all-data', methods=['GET'])
+
 def get_all_data():
     start_time = request.args.get('start_time')
     end_time = request.args.get('end_time')
