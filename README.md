@@ -10,6 +10,7 @@ Step 2:
   * numpy
   * flask
   * flask_cors
+  * pandas
   
 Step 3:  
   Run the file "rest_endpoints.py" which should kick start the server. End points mentioned below are ready for consumption.
