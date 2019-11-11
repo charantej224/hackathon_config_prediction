@@ -1,0 +1,22 @@
+html, body, .container-table {
+  height: 100%;
+}
+
+.container-table {
+  display: table;
+}
+
+.vertical-center-row {
+  display: table-cell;
+  vertical-align: middle;
+}
+.center_div {
+  margin: 10 ;
+  width: 60% /* value of your choice which suits your alignment */
+}
+.border-class {
+  border: thin black solid;
+  margin: 20px;
+  padding: 30px;
+  width:150%;
+}
