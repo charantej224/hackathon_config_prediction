@@ -11,7 +11,7 @@ Step 2:
   * flask
   * flask_cors
   
-Step 3:
+Step 3:  
   Run the file "rest_endpoints.py" which should kick start the server. End points mentioned below are ready for consumption.
   Sample End Points:  
   * http://localhost:5000/config-prediction/api/v1.0/service/all-data?start_time=9/9/19 18:57&end_time=11/4/19 21:59  
