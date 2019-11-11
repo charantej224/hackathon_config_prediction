@@ -66,6 +66,8 @@ class DataLoader:
         result = result[(result["created_time"] > start_dt_time) & (result["created_time"] < end_dt_time)]
         grouped_values1 = pd.DataFrame(
             {'count': result.groupby(['product_name', 'cores', 'storage']).size()}).reset_index()
+        print(grouped_values1)
+
         return_list = []
         for index, row in grouped_values1.iterrows():
             return_list.append(
@@ -149,5 +151,5 @@ class DataLoader:
         grouped_values1 = pd.DataFrame({'count': result.groupby(['customer_id', 'result']).size()}).reset_index()
         return_list = []
         for index, row in grouped_values1.iterrows():
-            return_list.append(Retention(row['customer_id'], row['result'], row['count']).to_json())
+            return_list.append(Retention(row['product_name'], row['result'], row['count']).to_json())
         return json.dumps(return_list)
