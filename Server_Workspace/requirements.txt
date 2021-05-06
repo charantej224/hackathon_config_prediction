@@ -15,7 +15,7 @@ cssselect==1.0.3
 cycler==0.10.0
 docutils==0.15.2
 Flask==1.1.1
-Flask-Cors==3.0.8
+Flask-Cors==3.0.9
 gast==0.2.2
 gensim==3.8.1
 GetOldTweets3==0.0.10
