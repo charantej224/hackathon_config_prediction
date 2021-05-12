@@ -24,7 +24,7 @@
     "amazing-time-picker": "^1.8.0",
     "angular-bootstrap-datetimepicker": "^3.1.0",
     "bootstrap": "^4.3.1",
-    "chart.js": "^2.9.2",
+    "chart.js": "^2.9.4",
     "jquery": "^3.4.1",
     "moment": "^2.24.0",
     "ng-pick-datetime": "^6.0.0",
